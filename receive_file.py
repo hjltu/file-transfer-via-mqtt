@@ -20,9 +20,12 @@ import os,glob,sys,time,_thread
 import json, binascii,base64, hashlib
 import paho.mqtt.client as mqtt
 
+HOST="192.168.0.10"
+PORT=1883
 SUBTOPIC="/file"
 PUBTOPIC=SUBTOPIC+"/status"
 TEMPDIR="temp"
+
 client = mqtt.Client()  # mqtt client
 
 def cleanJson(msg):
@@ -107,7 +110,7 @@ def main():
             print("ERR create dir "+TEMPDIR)
             return 1
     #print(__doc__)
-    client.connect("192.168.0.10",1883,60)
+    client.connect(HOST,PORT,60)
     #client.connect("localhost",1883,60)
     #client.connect("test.mosquitto.org")
     #client.connect("broker.hivemq.com",1883,60)

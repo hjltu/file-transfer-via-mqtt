@@ -21,13 +21,15 @@ import os,sys,time,json,threading
 import hashlib,base64
 import paho.mqtt.client as mqtt
 
-lock=threading.Lock()
-client = mqtt.Client()
-
+HOST="192.168.0.10"
+PORT=1883
 PUBTOPIC="/file"
 SUBTOPIC=PUBTOPIC+"/status"
 CHUNKSIZE=9999
 chunknumber=0
+
+lock=threading.Lock()
+client = mqtt.Client()
 
 def cleanJson(msg):
     return json.dumps(msg)#.replace("\n", "")
@@ -47,7 +49,8 @@ def my_publish(msg):
     try:
         #print("send:",msg,"\n")
         client.publish(PUBTOPIC, cleanJson(msg),qos=0)
-        print("pub: msg length =",sys.getsizeof(msg))
+        if msg["end"]==False:
+            print("pub chunk:",msg["chunknumber"])
     except Exception as e:
         print("ERR: publish",e)
 
@@ -82,13 +85,13 @@ def my_send(myfile):
                 lock.acquire()
                 chunknumber+=1
             else:
-                del payload["chunkdata"]
                 del payload["chunknumber"]
+                del payload["chunkdata"]
                 del payload["chunkhash"]
                 del payload["chunksize"]
                 payload.update({ \
                 "end":True})
-                print("last message")
+                print("END transfer file:",myfile)
                 my_publish(payload)
                 break
     time.sleep(1)
@@ -126,9 +129,10 @@ def main(myfile="test.txt"):
     if not os.path.isfile(myfile):
         print("ERR: no file",myfile)
         return 1
+    print("START transfer file",myfile,", chunksize =",CHUNKSIZE,"byte")
     #client.connect("localhost",1883,60)
     #client.connect("broker.hivemq.com",1883,60)
-    client.connect("192.168.0.10",1883,60)
+    client.connect(HOST,PORT,60)
     #client.connect("test.mosquitto.org")
     client.on_connect = on_connect
     client.on_message = on_message
