@@ -25,7 +25,7 @@ HOST="192.168.0.10"
 PORT=1883
 PUBTOPIC="/file"
 SUBTOPIC=PUBTOPIC+"/status"
-CHUNKSIZE=9999
+CHUNKSIZE=99999
 chunknumber=0
 
 lock=threading.Lock()
@@ -50,7 +50,8 @@ def my_publish(msg):
         #print("send:",msg,"\n")
         client.publish(PUBTOPIC, cleanJson(msg),qos=0)
         if msg["end"]==False:
-            print("pub chunk:",msg["chunknumber"])
+            print("send chunk:",msg["chunknumber"], \
+            "time:",int(time.time()-float(msg["timeid"])),"sec")
     except Exception as e:
         print("ERR: publish",e)
 

@@ -64,12 +64,13 @@ def my_temp_file(mydata,myhash,mynumber,timeid,filename):
 def my_check_temp_files(filename,timeid,filehash):
     """ check temp file and rename to original
     """
+    os.sync()
     for l in os.listdir(TEMPDIR):
         nameid=l.split("_")[0]
         if nameid == timeid:
             if my_md5(TEMPDIR+"/"+l) == filehash:
                 os.rename(TEMPDIR+"/"+l,TEMPDIR+"/"+filename)
-    for f in glob.glob("*.temp"):
+    for f in glob.glob(TEMPDIR+"/*.temp"):
         os.remove(f)
     print("OK: saved file",filename)
 
