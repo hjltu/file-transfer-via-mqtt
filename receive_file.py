@@ -28,8 +28,8 @@ TEMPDIR="temp"
 
 client = mqtt.Client()  # mqtt client
 
-def cleanJson(msg):
-    return json.dumps(msg)#.replace("\n", "")
+def my_json(msg):
+    return json.dumps(msg)  # object2string
 
 def my_exit(err):   # exit programm
     os._exit(err)
@@ -59,7 +59,7 @@ def my_temp_file(mydata,myhash,mynumber,timeid,filename):
         finally:
             f.close()
         print("saved chunk",mynumber,"to",fname)
-        client.publish(PUBTOPIC, cleanJson({"chunknumber": mynumber}))
+        client.publish(PUBTOPIC, my_json({"chunknumber": mynumber}))
 
 def my_check_temp_files(filename,timeid,filehash):
     """ check temp file and rename to original
