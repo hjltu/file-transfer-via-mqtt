@@ -31,8 +31,8 @@ chunknumber=0
 lock=threading.Lock()
 client = mqtt.Client()
 
-def cleanJson(msg):
-    return json.dumps(msg)#.replace("\n", "")
+def my_json(msg):
+    return json.dumps(msg) # object2string
 
 def my_exit(err):
     os._exit(err)
@@ -48,7 +48,7 @@ def my_md5(fname):
 def my_publish(msg):
     try:
         #print("send:",msg,"\n")
-        client.publish(PUBTOPIC, cleanJson(msg),qos=0)
+        client.publish(PUBTOPIC, my_json(msg),qos=0)
         if msg["end"]==False:
             print("send chunk:",msg["chunknumber"], \
             "time:",int(time.time()-float(msg["timeid"])),"sec")
